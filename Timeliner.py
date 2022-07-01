@@ -21,7 +21,7 @@ etc ...
 
 Plot Timelines with MatPlotLib
 
-To load your live google sheet online:
+To load your live google sheet online (set so anyone with the link can view):
 Change import_online to True, and replace ___online_url___ with that part of your url
 
 To load your offline .csv:
@@ -29,28 +29,36 @@ Download your Timeline as .csv (only downloading selected collumns and rows)
 And name the document 'Timeline.csv' and place in the same folder
 
 Run the script to plot your timelines
-Priority >= 3 is for longest timeline
-Priority >= 0 and < 3 is for recent timeline
 Priority <= 0 is not displayed 
 See the example .csv file (Timeline.csv) attached in this repository
 
 """
 
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.dates as mdates
 
 
 
-def show_timeline(df, set_title):
+def show_timeline(df, set_title, max_events):
     '''
-    Display timelines
+    Display timeline
     '''
+    # if didn't get DataFrame then return
+    if type(df) != pd.DataFrame:
+        return
+    
+    #sort
     df = df.sort_values(by=['Date'], ascending = False)
-    #df = df[:len(df)]
+    if max_events < len(df):
+        df = df[:len(df)]
+    
+    # remove low priority
+    df = df.loc[df['Priority'] > 0,:]
+    
     print(df)
+    
     names = df[['Event']].to_numpy()
     dates = df[['Date']].to_numpy()
     # reshape to remove 1 dimension of array
@@ -94,46 +102,80 @@ def show_timeline(df, set_title):
     # remove y axis and spines
     ax.yaxis.set_visible(False)
     ax.spines[["left", "top", "right"]].set_visible(False)
-    
     ax.margins(y=0.1)
-    
-
     plt.show()
 
 
-def import_timeline(file_name, online, read_rows):
+def fix_dates_in_col(df, col_index, col_names):
     '''
-    Import timeline from .csv file
+    Formats dates in a collumn
+    ----------
+    Returns
+    -------
+    modified DataFrame
+
     '''
-    df = []
-    try:
-        if online:
-            df = pd.read_csv('https://docs.google.com/spreadsheets/d/' + 
-                               '___online_url___' +
-                               '/export?gid=0&format=csv',
-                              )
-        else:
-            # file path (same directory as this file)
-            __location__ = os.path.realpath(
-                os.path.join(os.getcwd(), os.path.dirname(__file__)))
-            sheet_url = os.path.join(__location__, file_name)
-            df = pd.read_csv(sheet_url, nrows=read_rows, on_bad_lines='skip')
-            
-        df.dropna(how='all')
-        ldf = df.values.tolist()
-        #convert datetime
-        for i in range(len(ldf)):
-            ldf[i][1] = pd.to_datetime(df.iloc[i][1])
-        df = pd.DataFrame(ldf, columns=['Event', 'Date', 'Priority'])
-    except:
-        print('problem importing data')
+    ldf = df.values.tolist()
+    for i in range(len(ldf)):
+        ldf[i][col_index] = pd.to_datetime(df.iloc[i][col_index])
+    df = pd.DataFrame(ldf, columns=col_names)  
     return df
 
-'''
-Start up and display Timelines
-'''
-import_online = False
-set_title = "Timeline"
-df = import_timeline('Timeline.csv', import_online, 1000)
-#print(df)
-show_timeline(df, set_title)
+def import_data_table(file_name, online, gsheet_mid_link, read_rows, col_names):
+    '''
+    Import timeline from .csv file
+    
+    Parameters
+    ----------
+    file_name : string
+        File name including file extension
+    online : bool
+        Read online or local
+    read_rows : number
+        number of rows to read
+    col_names : array of strings
+        names of columns
+
+    Returns
+    -------
+    DataFrame of the content or error string
+
+    '''
+    df = 'error importing data'
+    if online:
+        try:
+            df = pd.read_csv('https://docs.google.com/spreadsheets/d/' + 
+            gsheet_mid_link +
+            '/export?gid=0&format=csv',nrows=read_rows, on_bad_lines='skip')
+            print('loaded data table from google sheet online')
+        except:
+            print('error loading data table from google sheet online')
+            online = False
+            
+    if online == False:
+        try:
+            df = pd.read_csv(file_name,nrows=read_rows, on_bad_lines='skip')
+            print('loaded data table from local .csv')
+        except:
+            print('error loading data from local .csv')
+    
+    # drop rows where at least 1 element is missing
+    if type(df) == pd.DataFrame:
+        df.dropna()
+
+    return df
+
+def start():
+    '''
+    Start up and display Timelines
+    '''
+    import_online = False
+    gsheet_mid_link = '___your_url_here___'
+    col_names = ['Event', 'Date', 'Priority']
+    df = import_data_table('Timeline.csv', import_online,gsheet_mid_link, 1000, col_names)
+    # convert dates to standard format if not already
+    df = fix_dates_in_col(df, 1, col_names)
+    #display timeline
+    show_timeline(df, 'Timeline', 100)
+    
+start()
