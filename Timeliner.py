@@ -22,12 +22,13 @@ etc ...
 Plot Timelines with MatPlotLib
 
 To load your live google sheet online (set so anyone with the link can view):
-Change import_online to True, and replace ___online_url___ with that part of your url
+Change import_online to True, and replace your_url_here with that part of your url
 
 To load your offline .csv:
-Download your Timeline as .csv (only downloading selected collumns and rows)
+Download your table as .csv (only downloading selected collumns and rows)
 And name the document 'Timeline.csv' and place in the same folder
 
+How to Use:
 Run the script to plot your timelines
 Priority <= 0 is not displayed 
 See the example .csv file (Timeline.csv) attached in this repository
@@ -171,7 +172,7 @@ def start():
     Start up and display Timelines
     '''
     import_online = False
-    gsheet_mid_link = '___your_url_here___'
+    gsheet_mid_link = 'your_url_here'
     col_names = ['Event', 'Date', 'Priority']
     df = import_data_table('Timeline.csv', import_online,gsheet_mid_link, 1000, col_names)
     # convert dates to standard format if not already
