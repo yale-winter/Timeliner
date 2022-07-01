@@ -40,10 +40,9 @@ import numpy as np
 import matplotlib.dates as mdates
 
 
-
 def show_timeline(df, set_title, max_events):
     '''
-    Display timeline
+    Display timeline with DataFrame, Title, Max Events
     '''
     # if didn't get DataFrame then return
     if type(df) != pd.DataFrame:
@@ -51,6 +50,8 @@ def show_timeline(df, set_title, max_events):
     
     #sort
     df = df.sort_values(by=['Date'], ascending = False)
+    
+    # limit to max events
     if max_events < len(df):
         df = df[:len(df)]
     
