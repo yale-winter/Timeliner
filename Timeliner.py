@@ -36,6 +36,7 @@ See the example .csv file (Timeline.csv) attached in this repository
 """
 
 import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.dates as mdates
@@ -174,6 +175,8 @@ def start():
     import_online = False
     gsheet_mid_link = 'your_url_here'
     col_names = ['Event', 'Date', 'Priority']
+    # large picture
+    mpl.rcParams['figure.dpi'] = 100
     df = import_data_table('Timeline.csv', import_online,gsheet_mid_link, 1000, col_names)
     # convert dates to standard format if not already
     df = fix_dates_in_col(df, 1, col_names)
