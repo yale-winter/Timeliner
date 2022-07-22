@@ -21,9 +21,6 @@ etc ...
 
 Plot Timelines with MatPlotLib
 
-To load your live google sheet online (set so anyone with the link can view):
-Change import_online to True, and replace your_url_here with that part of your url
-
 To load your offline .csv:
 Download your table as .csv (only downloading selected collumns and rows)
 And name the document 'Timeline.csv' and place in the same folder
