@@ -1,7 +1,7 @@
 - - - - - - - - - - - - - - - - - - - - - - - - -
 **Timeliner: Simple Timeline Creator with Python MatPlotLib**
 - - - - - - - - - - - - - - - - - - - - - - - - -
-Create a google sheet online or use with .csv offline with the following schema:
+Use with .csv offline with the following schema:
 
 | Event | Date | Priority |
 | --- | --- | --- |
@@ -10,8 +10,6 @@ Create a google sheet online or use with .csv offline with the following schema:
 
 Plot Timelines with MatPlotLib
 
-**To load your live google sheet online (set so anyone with the link can view):**<br/>
-Change import_online to True, and replace _your_url_here_ with that part of your url<br/><br/>
 **To load your offline .csv:**<br/>
 Download your table as .csv (only downloading selected collumns and rows)<br/>
 And name the document 'Timeline.csv' and place in the same folder<br/><br/>
