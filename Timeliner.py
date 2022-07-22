@@ -11,7 +11,7 @@ TimeLiner - Make a simple timeline with MatPlotLib
 
 - - - - - - - - - - - - - - - - - - - - - - - - -
 
-Create a google sheet online or use with .csv offline 
+Use with a .csv offline 
 The document needs the following schema:
 
 Collumns: (A)Event  (B)Date   (C)Priority
