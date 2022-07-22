@@ -83,12 +83,12 @@ def show_timeline(df, set_title, max_events):
                      int(np.ceil(len(dates)/10)))[:len(dates)]
     
     # Create figure and plot a stem plot with the date
-    fig, ax = plt.subplots(figsize=(8.8, 4), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(10, 4), constrained_layout=True)
     ax.set(title=set_title)
     
-    ax.vlines(dates, 0, levels, color="tab:blue")  # The vertical stems.
+    ax.vlines(dates, 0, levels, color="tab:orange")  # The vertical stems.
     ax.plot(dates, np.zeros_like(dates), "-o",
-            color="k", markerfacecolor="w")  # Baseline and markers on it.
+            color="tab:blue", markerfacecolor="w")  # Baseline and markers on it.
     
     # annotate lines
     for d, l, r in zip(dates, levels, names):
@@ -124,7 +124,7 @@ def fix_dates_in_col(df, col_index, col_names):
     df = pd.DataFrame(ldf, columns=col_names)  
     return df
 
-def import_data_table(file_name, online, gsheet_mid_link, read_rows, col_names):
+def import_data_table(file_name, read_rows, col_names):
     '''
     Import timeline from .csv file
     
@@ -132,8 +132,6 @@ def import_data_table(file_name, online, gsheet_mid_link, read_rows, col_names):
     ----------
     file_name : string
         File name including file extension
-    online : bool
-        Read online or local
     read_rows : number
         number of rows to read
     col_names : array of strings
@@ -145,23 +143,12 @@ def import_data_table(file_name, online, gsheet_mid_link, read_rows, col_names):
 
     '''
     df = 'error importing data'
-    if online:
-        try:
-            df = pd.read_csv('https://docs.google.com/spreadsheets/d/' + 
-            gsheet_mid_link +
-            '/export?gid=0&format=csv',nrows=read_rows, on_bad_lines='skip')
-            print('loaded data table from google sheet online')
-        except:
-            print('error loading data table from google sheet online')
-            online = False
-            
-    if online == False:
-        try:
-            df = pd.read_csv(file_name,nrows=read_rows, on_bad_lines='skip')
-            print('loaded data table from local .csv')
-        except:
-            print('error loading data from local .csv')
-    
+    try:
+        df = pd.read_csv(file_name,nrows=read_rows, on_bad_lines='skip')
+        print('loaded data table from local .csv')
+    except:
+        print('error loading data from local .csv')
+
     # drop rows where at least 1 element is missing
     if type(df) == pd.DataFrame:
         df.dropna()
@@ -172,12 +159,10 @@ def start():
     '''
     Start up and display Timelines
     '''
-    import_online = False
-    gsheet_mid_link = 'your_url_here'
     col_names = ['Event', 'Date', 'Priority']
     # large picture
     mpl.rcParams['figure.dpi'] = 100
-    df = import_data_table('Timeline.csv', import_online,gsheet_mid_link, 1000, col_names)
+    df = import_data_table('Timeline.csv', 1000, col_names)
     # convert dates to standard format if not already
     df = fix_dates_in_col(df, 1, col_names)
     #display timeline
